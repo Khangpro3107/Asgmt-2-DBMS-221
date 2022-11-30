@@ -1,15 +1,19 @@
-const {methodGetAllTrainee} = require('../models/models')
+const {connection} = require('../db/connect');
 
 const getAllTrainee = async(req, res)=>{
-  const allTrainees = await methodGetAllTrainee();
-  // console.log(allTrainees);
-  res.json(JSON.stringify(allTrainees));
+  connection.query('SELECT * FROM trainee', function (err, result, fields) {
+    if (err) throw err;
+    console.log(result);
+    return res.json(result);
+  });
 }
 const createNewTrainee = async(req, res)=>{
-  res.json("Xin chao create");
+  const data = req.body;
+  res.json(req.body);
 }
 const getOneTrainee = async(req, res)=>{
-  res.json("Xin chao one");
+  const id = req.params.id;
+  res.json(`Xin chao create ${id}`);
 }
 const UpdateOneTrainee = async(req, res)=>{
   res.json("Xin chao update");

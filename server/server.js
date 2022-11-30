@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const { connectDB } = require("./db/connect");
+const bodyParser = require("body-parser");
+const cors = require("cors");
 const {
   getAllTrainee,
   createNewTrainee,
@@ -14,6 +16,8 @@ require("dotenv").config();
 const homePageMiddleware = require("./controllers/controllers"); // importing controllers
 
 app.use(morgan("common"));
+app.use(cors());
+app.use(bodyParser.json())
 
 app.get("/trainees", getAllTrainee);
 app.post("/trainee", createNewTrainee);
