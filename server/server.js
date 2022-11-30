@@ -21,9 +21,9 @@ app.use(bodyParser.json())
 
 app.get("/trainees", getAllTrainee);
 app.post("/trainee", createNewTrainee);
-app.get("/trainee/:id", getOneTrainee);
-app.patch("/trainee/:id", UpdateOneTrainee);
-app.get("/trainee/season/:id", getSeasonTrainee);
+app.get("/trainee/:ssn", getOneTrainee);
+app.patch("/trainee/:ssn", UpdateOneTrainee);
+app.get("/trainee/:season/:ssn", getSeasonTrainee);
 
 const start = async () => {
   try {
