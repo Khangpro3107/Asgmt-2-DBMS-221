@@ -1,14 +1,12 @@
-// database-related methods here
-const mysql = require("mysql");
+const {connection} = require("../db/connect")
 
-const con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "password",
-  database: "asgmt2"
-});
+const getAll = () => {
+  return new Promise((resolve, reject) => {
+    connection.query("SELECT * FROM trainee", (err, result) => {
+      if (err) reject(err);
+      else resolve(result)
+    })
+  })
+}
 
-con.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-});
+module.exports = {getAll}
