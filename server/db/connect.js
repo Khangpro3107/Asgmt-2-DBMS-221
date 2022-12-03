@@ -1,7 +1,8 @@
 const mysql = require("mysql");
+require("dotenv").config();
 
 const connection = mysql.createConnection(
-  "mysql://root:1234@localhost:3306/assignment2"
+  `mysql://${process.env.DB_USERNAME}:${process.env.PASSWORD}@:${process.env.DB_PORT}/${process.env.DB_NAME}`
 );
 
 const connectDB = async () => {

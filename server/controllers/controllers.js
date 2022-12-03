@@ -1,4 +1,6 @@
-const { connection } = require("../db/connect");
+const { connection, connectDB } = require("../db/connect");
+const {getAll} = require("../models/models");
+require("dotenv").config();
 
 const getAllTrainee = async (req, res) => {
   connection.query("SELECT * FROM trainee", function (err, result, fields) {
@@ -86,11 +88,50 @@ const getSeasonTrainee = async (req, res) => {
   });
 };
 
+const getAllTrainee2 = async (req, res) => {
+  getAll().then((result) => {
+    return res.json(result)
+  }).catch(err => res.json({msg: err.message}));
+};
+
+const login = async (req, res) => {
+  const {username, password} = req.body;
+  if (username !== process.env.DB_USERNAME || password !== process.env.PASSWORD) return res.json({msg: "Invalid login credentials!"})
+  res.cookie("username", process.env.DB_USERNAME, {maxAge: 5000});
+  try {
+    if (connection.state === "disconnected") await connectDB();
+    console.log("Database connected! Username: ", username);
+  } catch (error) {
+    console.log(error.message);
+  }
+  return res.status(200).json({msg: "Login successful!"})
+}
+
+const logout = async (req, res) => {
+  res.clearCookie("username");
+  try {
+    if (connection.state === "authenticated") await connection.destroy();
+    console.log("Database disconnected!");
+  } catch (error) {
+    console.log(error.message);
+  }
+  return res.status(200).json({msg: "Logout successful!"});
+}
+
+const checkAuthenticated = async (req, res, next) => {
+  if (req.cookies.username) return next();
+  return res.status(401).json({msg: "Not authenticated!"});
+}
+
 module.exports = {
   getAllTrainee,
+  getAllTrainee2,
   createNewTrainee,
   getOneTrainee,
   UpdateOneTrainee,
   getSeasonTrainee,
+  login,
+  logout,
+  checkAuthenticated
 };
 // controllers, middlewares here
