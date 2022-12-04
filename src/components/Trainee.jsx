@@ -244,7 +244,7 @@ const Trainee = () => {
             <button className="Button" style={{float: 'right', margin: '3% 5% 0 0', border: '1px solid white'}} onClick={handdleAdd}><FaPlusCircle style={{marginTop: '-9%'}}/> Add</button>
 
             <div style={{height: '70%', overflowY: 'scroll', width: '90%', margin: 'auto'}}>
-                <table className="table table-hover table-striped" style={{background: 'white'}}>
+                <table className="table table-hover table-striped" style={{background: 'white', border: '1px solid white'}}>
                     <thead>
                         <tr style={{background: '#3F7B74', color: 'white'}}>
                             <th scope="col">#</th>
