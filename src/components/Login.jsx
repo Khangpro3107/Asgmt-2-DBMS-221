@@ -7,11 +7,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate, useLocation } from 'react-router-dom';
-
-//import { useNavigate, useLocation } from 'react-router-dom';
 //import axios from '../api/axios';
-
-//const LOGIN_URL = '/login';
 
 const Login = () => {    
     
@@ -32,15 +28,9 @@ const Login = () => {
         e.preventDefault();
         /*try {
             const res = await axios.post(
-                LOGIN_URL, 
+                '/login', 
                 {"user": username, "pwd": password},
-                {
-                    'Content-Type': 'application/json',
-                    withCredentials: true
-                }
-            );
-            const accessToken = res?.data?.accessToken;
-            setAuth({username, password, accessToken, roles});*/
+            );*/
             setAuth({username, password})
             setUsername('');
             setPassword('');
