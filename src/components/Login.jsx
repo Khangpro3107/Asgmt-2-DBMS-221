@@ -29,8 +29,8 @@ const Login = () => {
         /*try {
             const res = await axios.post(
                 '/login', 
-                {"user": username, "pwd": password},
-            );*/
+                {username, password},
+            );*/ 
             setAuth({username, password})
             setUsername('');
             setPassword('');
