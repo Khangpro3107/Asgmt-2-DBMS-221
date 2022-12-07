@@ -30,14 +30,21 @@ const createNewTrainee = async (req, res) => {
     console.log("Insert person successfully");
   });
   // insert trainee
-  const q = "INSERT INTO trainee(SSN, DoB, Photo, Company_ID) VALUES (?)";
-
-  const values = [
+  let q = "INSERT INTO trainee(SSN, DoB, Photo, Company_ID) VALUES (?)";
+  let values = [
     req.body.SSN,
     req.body.DoB,
-    req.body.Photo,
+    req.body.photo,
     req.body.Company_ID,
   ];
+  if (req.body.Company_ID === "") {
+    q = "INSERT INTO trainee(SSN, DoB, Photo) VALUES (?)";
+    values = [
+      req.body.SSN,
+      req.body.DoB,
+      req.body.photo
+    ];
+  }
 
   connection.query(q, [values], (err, data) => {
     if (err) return res.send(err);
@@ -51,6 +58,7 @@ const getOneTrainee = async (req, res) => {
 
   connection.query(q, values, (err, data) => {
     if (err) return res.send(err);
+    console.log(data, "getonetrainee")
     return res.json(data);
   });
 };
@@ -72,7 +80,7 @@ const UpdateOneTrainee = async (req, res) => {
   // insert trainee
   const q = "UPDATE trainee SET DoB=?, Photo=?, Company_ID=? WHERE SSN= ?";
 
-  const values = [req.body.DoB, req.body.Photo, req.body.Company_ID];
+  const values = [req.body.DoB, req.body.photo, req.body.Company_ID];
 
   connection.query(q, [...values, ssn], (err, data) => {
     if (err) return res.send(err);
@@ -101,10 +109,14 @@ const getAllTrainee2 = async (req, res) => {
 };
 
 const login = async (req, res) => {
+  console.log(req.body)
   const { username, password } = req.body;
+  console.log(username, password, process.env.DB_USERNAME)
   if (username !== process.env.DB_USERNAME || password !== process.env.PASSWORD)
-    return res.json({ msg: "Invalid login credentials!" });
-  res.cookie("username", process.env.DB_USERNAME, { maxAge: 5000 });
+    return res.status(401).json({ msg: "Invalid login credentials!" });
+  console.log("setting cookie");
+  res.cookie("username", process.env.DB_USERNAME, { maxAge: 10000000000 });
+  console.log("done setting cookie");
   try {
     if (connection.state === "disconnected") await connectDB();
     console.log("Database connected! Username: ", username);
@@ -126,8 +138,9 @@ const logout = async (req, res) => {
 };
 
 const checkAuthenticated = async (req, res, next) => {
+  console.log(req.cookies.username, "check authen!")
   if (req.cookies.username) return next();
-  return res.status(401).json({ msg: "Not authenticated!" });
+  return res.status(401).json({ msg: "Not authenticated! From cookie" });
 };
 
 module.exports = {

@@ -7,30 +7,49 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const {
   getAllTrainee,
-  getAllTrainee2,
   createNewTrainee,
   getOneTrainee,
   UpdateOneTrainee,
   getSeasonTrainee,
   login,
   logout,
-  checkAuthenticated
+  checkAuthenticated,
 } = require("./controllers/controllers");
 require("dotenv").config();
 
 app.use(morgan("common"));
-app.use(cors());
-app.use(express.json());
 app.use(cookieParser());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
+app.use(express.json());
+app.use((req, res, next) => {
+  res.header("Content-Type", "application/json;charset=UTF-8");
+  res.header("Access-Control-Allow-Credentials", true);
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
 
-app.get("/trainees", getAllTrainee);
-app.get("/trainees2", getAllTrainee2);
-app.post("/trainee", createNewTrainee);
-app.get("/trainee/:ssn", getOneTrainee);
-app.patch("/trainee/:ssn", UpdateOneTrainee);
-app.get("/trainee/:season/:ssn", getSeasonTrainee);
-app.get("/logout", logout);
+app.get("/trainees", checkAuthenticated, getAllTrainee);
+app.post("/trainee", checkAuthenticated, createNewTrainee);
+app.get("/trainee/:ssn", checkAuthenticated, getOneTrainee);
+app.patch("/trainee/:ssn", checkAuthenticated, UpdateOneTrainee);
+app.get("/trainee/:season/:ssn", checkAuthenticated, getSeasonTrainee);
+app.get("/logout", checkAuthenticated, logout);
 app.post("/login", login);
+// app.get("/trainees", getAllTrainee);
+// app.post("/trainee", createNewTrainee);
+// app.get("/trainee/:ssn", getOneTrainee);
+// app.patch("/trainee/:ssn", UpdateOneTrainee);
+// app.get("/trainee/:season/:ssn", getSeasonTrainee);
+// app.get("/logout", logout);
+// app.post("/login", login);
 
 const start = async () => {
   try {
