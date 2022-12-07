@@ -1,95 +1,26 @@
 const { connection, connectDB } = require("../db/connect");
-const { getAll } = require("../models/models");
+const { getAllTraineesAPI, addPersonAPI, addTraineeAPI, getOneTraineeAPI, getSeasonTraineeAPI } = require("../models/models");
 require("dotenv").config();
+
+// const getAllTrainee = async (req, res) => {
+//   const name =
+//     req.query.name == undefined ? "%%" : "%" + req.query.name + "%";
+//   const q =
+//     "SELECT * FROM trainee t, person p WHERE t.SSN = p.SSN AND concat(p.Fname, ' ',p.Lname) LIKE ?;";
+//   const values = [name];
+
+//   connection.query(q, values, (err, data) => {
+//     if (err) return res.send(err);
+//     return res.json(data);
+//   });
+// };
 
 const getAllTrainee = async (req, res) => {
   const name =
-    req.query.name == undefined ? "%%" : "%" + req.query.name.slice(1, 2) + "%";
-  const q =
-    "SELECT * FROM trainee t, person p WHERE t.SSN = p.SSN AND concat(p.Fname, ' ',p.Lname) LIKE ?;";
-  const values = [name];
-
-  connection.query(q, values, (err, data) => {
-    if (err) return res.send(err);
-    return res.json(data);
-  });
-};
-const createNewTrainee = async (req, res) => {
-  // insert person
-  const personValues = [
-    req.body.SSN,
-    req.body.Fname,
-    req.body.Lname,
-    req.body.Paddress,
-    req.body.Pphone,
-  ];
-  const personQ =
-    "INSERT INTO person(SSN, Fname, Lname, Paddress, Pphone) VALUES (?)";
-  connection.query(personQ, [personValues], (err, data) => {
-    if (err) return res.send(err);
-    console.log("Insert person successfully");
-  });
-  // insert trainee
-  const q = "INSERT INTO trainee(SSN, DoB, Photo, Company_ID) VALUES (?)";
-
-  const values = [
-    req.body.SSN,
-    req.body.DoB,
-    req.body.Photo,
-    req.body.Company_ID,
-  ];
-
-  connection.query(q, [values], (err, data) => {
-    if (err) return res.send(err);
-    return res.json("Create successfully");
-  });
-};
-const getOneTrainee = async (req, res) => {
-  const ssn = req.params.ssn;
-  const q = "call get_one_trainee_info(?);";
-  const values = [ssn];
-
-  connection.query(q, values, (err, data) => {
-    if (err) return res.send(err);
-    return res.json(data);
-  });
-};
-const UpdateOneTrainee = async (req, res) => {
-  // insert person
-  const ssn = req.params.ssn;
-  const personValues = [
-    req.body.Fname,
-    req.body.Lname,
-    req.body.Paddress,
-    req.body.Pphone,
-  ];
-  const personQ =
-    "UPDATE person SET Fname= ?, Lname= ?, Paddress= ?, Pphone= ? WHERE SSN= ?";
-  connection.query(personQ, [...personValues, ssn], (err, data) => {
-    if (err) return res.send(err);
-    console.log("Insert person successfully");
-  });
-  // insert trainee
-  const q = "UPDATE trainee SET DoB=?, Photo=?, Company_ID=? WHERE SSN= ?";
-
-  const values = [req.body.DoB, req.body.Photo, req.body.Company_ID];
-
-  connection.query(q, [...values, ssn], (err, data) => {
-    if (err) return res.send(err);
-    return res.json("Get successfully");
-  });
-};
-const getSeasonTrainee = async (req, res) => {
-  const season = req.params.season;
-  const ssn = req.params.ssn;
-  const q = "call GetTraineeResult2 (?, ?)";
-
-  const values = [season, ssn];
-
-  connection.query(q, values, (err, data) => {
-    if (err) return res.send(err);
-    return res.json(data);
-  });
+    req.query.name == undefined ? "%%" : "%" + req.query.name + "%";
+  getAllTraineesAPI(name).then((result) => {
+    return res.json(result);
+  }).catch((err) => res.json({ msg: err.message }))
 };
 
 const getAllTrainee2 = async (req, res) => {
@@ -100,11 +31,64 @@ const getAllTrainee2 = async (req, res) => {
     .catch((err) => res.json({ msg: err.message }));
 };
 
+const addNewPerson = async (req, res, next) => {
+  // insert person
+  const personValues = [
+    req.body.SSN,
+    req.body.Fname,
+    req.body.Lname,
+    req.body.Paddress,
+    req.body.Pphone,
+  ];
+  addPersonAPI(personValues).then((result) => {
+    console.log("Added person: ", result);
+    return next();
+  }).catch((err) => res.json({ msg: err.message }));
+}
+
+const addNewTrainee = async (req, res) => {
+  // insert trainee
+  let traineeValues = [
+    req.body.SSN,
+    req.body.DoB,
+    req.body.photo,
+    req.body.Company_ID,
+  ];
+  if (req.body.Company_ID === "") {
+    traineeValues = [
+      req.body.SSN,
+      req.body.DoB,
+      req.body.photo
+    ];
+  }
+  addTraineeAPI(traineeValues, req.body.Company_ID === "").then((result) => {
+    return res.status(200).json(result)
+  })
+  .catch((err) => res.json({ msg: err.message }));
+};
+const getOneTrainee = async (req, res) => {
+  const ssn = req.params.ssn;
+  getOneTraineeAPI(ssn).then((result) => {
+    res.status(200).json(result[0][0])
+  })
+  .catch((err) => res.json({ msg: err.message }));
+};
+
+const getSeasonTrainee = async (req, res) => {
+  const season = req.params.season;
+  const ssn = req.params.ssn;
+
+  getSeasonTraineeAPI(season, ssn).then((result) => {
+    res.status(200).json(result[0])
+  })
+  .catch((err) => res.json({ msg: err.message }));
+};
+
 const login = async (req, res) => {
   const { username, password } = req.body;
   if (username !== process.env.DB_USERNAME || password !== process.env.PASSWORD)
-    return res.json({ msg: "Invalid login credentials!" });
-  res.cookie("username", process.env.DB_USERNAME, { maxAge: 5000 });
+    return res.status(401).json({ msg: "Invalid login credentials!" });
+  res.cookie("username", process.env.DB_USERNAME, { maxAge: 10000000000 });
   try {
     if (connection.state === "disconnected") await connectDB();
     console.log("Database connected! Username: ", username);
@@ -127,18 +111,16 @@ const logout = async (req, res) => {
 
 const checkAuthenticated = async (req, res, next) => {
   if (req.cookies.username) return next();
-  return res.status(401).json({ msg: "Not authenticated!" });
+  return res.status(401).json({ msg: "Not authenticated! From cookie" });
 };
 
 module.exports = {
   getAllTrainee,
-  getAllTrainee2,
-  createNewTrainee,
+  addNewTrainee,
+  addNewPerson,
   getOneTrainee,
-  UpdateOneTrainee,
   getSeasonTrainee,
   login,
   logout,
   checkAuthenticated,
 };
-// controllers, middlewares here
