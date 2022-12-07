@@ -33,7 +33,7 @@ const Trainee = () => {
     };
 
     getAllTrainee();
-  }, []);
+  }, [addForm]);
 
   const handleFind = async () => {
     try {
@@ -88,6 +88,7 @@ const Trainee = () => {
         onClick={async () => {
           try {
             await axios.get("/logout");
+            localStorage.removeItem("username");
           } catch (err) {
             console.error(err);
           }

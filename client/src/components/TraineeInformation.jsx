@@ -21,7 +21,6 @@ const TraineeInformation = () => {
                     `/trainee/${ssn}`
                 );
                 setData(res.data);
-                console.log("useeffect", res.data)
             } 
             catch (err) {
                 console.log(err.message);
@@ -78,28 +77,6 @@ const TraineeInformation = () => {
             catch (err) {
                 console.error(err);
                 setCurSeason(season);
-                setResult([
-                    {
-                        "result_ep": 1,
-                        "result": "error here"
-                    },
-                    {
-                        "result_ep": 2,
-                        "result": 0
-                    },
-                    {
-                        "result_ep": 3,
-                        "result": 0
-                    },
-                    {
-                        "result_ep": 4,
-                        "result": 0
-                    },
-                    {
-                        "result_ep": 5,
-                        "result": 0
-                    }
-                ]);
             }
         }
 
@@ -114,11 +91,10 @@ const TraineeInformation = () => {
                 <Row>
                     <Col xl={4} style={{padding: 0}}>
                         <div style={{textAlign: 'center', paddingBottom: '40px', width: '95%', border: '1px solid black', borderRadius: '20pt', background: 'white', marginBottom: 10}}>
-                            {console.log("photo", data)}
-                            <img src={data[0][0].photo} alt='personalImg' style={{width: 200, height: 180, margin: '20px 0', objectFit: "cover", borderRadius: "50%"}}/>
-                            <div style={{fontWeight: 700, fontSize: '150%'}}>{data[0][0].name}</div>
+                            <img src={data.photo} alt='personalImg' style={{width: 200, height: 180, margin: '20px 0', objectFit: "cover", borderRadius: "50%"}}/>
+                            <div style={{fontWeight: 700, fontSize: '150%'}}>{data.name}</div>
                             <div style={{color: '#7E7878', fontSize: '120%'}}>Trainee</div>
-                            <div style={{color: '#7E7878', fontSize: '120%'}}>{data[0][0].SSN}</div>
+                            <div style={{color: '#7E7878', fontSize: '120%'}}>{data.SSN}</div>
                         </div>
                         <div style={{width: '95%', border: '1px solid black', borderRadius: '20pt', background: 'white', padding: '5px 15%'}}>
                             <Row>
@@ -145,27 +121,27 @@ const TraineeInformation = () => {
                         <div style={{padding: '10px 40px', border: '1px solid black', borderRadius: '20pt', background: 'white'}}>
                             <Row>
                                 <Col xl={4} style={{fontWeight: 700, borderBottom: '1px solid #b3b3b3', padding: '15px 0'}}>Full Name:</Col>
-                                <Col xl={8} style={{fontWeight: 500, borderBottom: '1px solid #b3b3b3', padding: '15px 0'}}>{data[0][0].name}</Col>
+                                <Col xl={8} style={{fontWeight: 500, borderBottom: '1px solid #b3b3b3', padding: '15px 0'}}>{data.name}</Col>
                             </Row>
                             <Row>
                                 <Col xl={4} style={{fontWeight: 700, borderBottom: '1px solid #b3b3b3', padding: '15px 0'}}>SSN:</Col>
-                                <Col xl={8} style={{fontWeight: 500, borderBottom: '1px solid #b3b3b3', padding: '15px 0'}}>{data[0][0].SSN}</Col>
+                                <Col xl={8} style={{fontWeight: 500, borderBottom: '1px solid #b3b3b3', padding: '15px 0'}}>{data.SSN}</Col>
                             </Row>
                             <Row>
                                 <Col xl={4} style={{fontWeight: 700, borderBottom: '1px solid #b3b3b3', padding: '15px 0'}}>Phone:</Col>
-                                <Col xl={8} style={{fontWeight: 500, borderBottom: '1px solid #b3b3b3', padding: '15px 0'}}>{data[0][0].phone}</Col>
+                                <Col xl={8} style={{fontWeight: 500, borderBottom: '1px solid #b3b3b3', padding: '15px 0'}}>{data.phone}</Col>
                             </Row>
                             <Row>
                                 <Col xl={4} style={{fontWeight: 700, borderBottom: '1px solid #b3b3b3', padding: '15px 0'}}>Address:</Col>
-                                <Col xl={8} style={{fontWeight: 500, borderBottom: '1px solid #b3b3b3', padding: '15px 0'}}>{data[0][0].address}</Col>
+                                <Col xl={8} style={{fontWeight: 500, borderBottom: '1px solid #b3b3b3', padding: '15px 0'}}>{data.address}</Col>
                             </Row>    
                             <Row>
                                 <Col xl={4} style={{fontWeight: 700, borderBottom: '1px solid #b3b3b3', padding: '15px 0'}}>Number of seasons:</Col>
-                                <Col xl={8} style={{fontWeight: 500, borderBottom: '1px solid #b3b3b3', padding: '15px 0'}}>{data[0][0].numSeason}</Col>
+                                <Col xl={8} style={{fontWeight: 500, borderBottom: '1px solid #b3b3b3', padding: '15px 0'}}>{data.numSeason}</Col>
                             </Row>
                             <Row>
                                 <Col xl={4} style={{fontWeight: 700, borderBottom: '1px solid #b3b3b3', padding: '15px 0'}}>Best achivement:</Col>
-                                <Col xl={8} style={{fontWeight: 500, borderBottom: '1px solid #b3b3b3', padding: '15px 0'}}>{data[0][0].max_No + ' (' + data[0][0].max_year + ')'}</Col>
+                                <Col xl={8} style={{fontWeight: 500, borderBottom: '1px solid #b3b3b3', padding: '15px 0'}}>{(!data.max_No || !data.max_year) ? "___" : `${data.max_No} (${data.max_year})`}</Col>
                             </Row>
                         </div>
                         <Row style={{marginTop: 10}}>
